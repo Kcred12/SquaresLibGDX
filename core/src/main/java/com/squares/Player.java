@@ -10,6 +10,7 @@ public class Player {
     public float x, y;
     private float speed;
     public Texture texture;
+    public final int SIZE = 30;
 
     // Movement flags
     public boolean movingLeft, movingRight, movingUp, movingDown;
@@ -18,7 +19,7 @@ public class Player {
         this.x = startX;
         this.y = startY;
         this.speed = speed;
-        this.texture = createTexture(50, 50, Color.CYAN); // electric cyan square
+        this.texture = createTexture(SIZE, SIZE, Color.CYAN); // electric cyan square
     }
 
     // Generate a simple colored square texture

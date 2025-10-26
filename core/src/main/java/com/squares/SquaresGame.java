@@ -8,15 +8,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class SquaresGame extends ApplicationAdapter {
 
     private Player player;
+    private Enemy enemy;
     private SpriteBatch batch;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        player = new Player(100, 100, 200);
+        player = new Player(35, 100, 400);
 
         // Set InputProcessor for reliable keyboard input
         Gdx.input.setInputProcessor(new PlayerInput(player));
+
+        enemy = new Enemy(300, 300, 250);
     }
 
     @Override
@@ -29,10 +32,12 @@ public class SquaresGame extends ApplicationAdapter {
 
         // Update player
         player.update(deltaTime);
+        enemy.update(deltaTime);
 
         // Draw player
         batch.begin();
         batch.draw(player.texture, player.x, player.y);
+        batch.draw(enemy.texture, enemy.x, enemy.y);
         batch.end();
     }
 
@@ -40,5 +45,6 @@ public class SquaresGame extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         player.dispose();
+        enemy.dispose();
     }
 }
