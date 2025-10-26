@@ -58,9 +58,14 @@ public class SquaresGame extends ApplicationAdapter {
 
     private void checkPlayerEnemyCollision(Player player, Enemy enemy) {
 
-        // Calculate the distance between player and enemy centers
-        float dx = enemy.x - player.x; 
-        float dy = enemy.y - player.y;
+        float playerCenterX = player.x + player.texture.getWidth() / 2f;
+        float playerCenterY = player.y + player.texture.getHeight() / 2f;
+
+        float enemyCenterX = enemy.x + enemy.texture.getWidth() / 2f;
+        float enemyCenterY = enemy.y + enemy.texture.getHeight() / 2f;
+
+        float dx = enemyCenterX - playerCenterX;
+        float dy = enemyCenterY - playerCenterY;
 
         // Compute the squared distance (faster than sqrt)
         float distanceSquared = dx * dx + dy * dy;
@@ -80,16 +85,16 @@ public class SquaresGame extends ApplicationAdapter {
 
             // Step 2: Push the enemy away from the player
             float overlap = radiusSum - distance;
-            enemy.x += nx * overlap * 0.5f;
-            enemy.y += ny * overlap * 0.5f;
+            enemy.x += nx * overlap * 0.8f;
+            enemy.y += ny * overlap * 0.8f;
 
             // Step 3: Push the player away from the enemy
-            player.x -= nx * overlap * 0.5f;
-            player.y -= ny * overlap * 0.5f;
+            player.x -= nx * overlap * 0.2f;
+            player.y -= ny * overlap * 0.2f;
 
-            // Step 4: Bounce (swap velocities along collision normal)
-            enemy.dx = -enemy.dx;
-            enemy.dy = -enemy.dy;
+            float dot = enemy.dx * nx + enemy.dy * ny;
+            enemy.dx -= 2 * dot * nx;
+            enemy.dy -= 2 * dot * ny;
     }
 }
 
