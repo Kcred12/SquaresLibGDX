@@ -13,7 +13,8 @@ public class Enemy {
     private final float maxSpeed;
 
     public float x, y;          // Position
-    public float speedX, speedY; // Velocity
+    public float dx, dy; // Velocity
+    public final float radius;
 
     public Texture texture;
     private static final Random random = new Random();
@@ -27,10 +28,12 @@ public class Enemy {
 
         // Random movement direction
         float angle = (float) (random.nextFloat() * Math.PI * 2);
-        this.speedX = (float) Math.cos(angle) * maxSpeed;
-        this.speedY = (float) Math.sin(angle) * maxSpeed;
+        this.dx = (float) Math.cos(angle) * maxSpeed;
+        this.dy = (float) Math.sin(angle) * maxSpeed;
 
         this.texture = createTexture(SIZE, SIZE, Color.RED);
+
+        this.radius = SIZE / 2f + 2;
     }
 
     private Texture createTexture(int width, int height, Color color) {
@@ -44,17 +47,17 @@ public class Enemy {
 
     public void update(float deltaTime) {
 
-        float newX = this.x + speedX * deltaTime;
-        float newY = this.y + speedY * deltaTime;
+        float newX = this.x + this.dx * deltaTime;
+        float newY = this.y + this.dy * deltaTime;
 
         // Bounce horizontally
         if (newX < 0 || newX + texture.getWidth() > Gdx.graphics.getWidth()) {
-            speedX = -speedX;
+            this.dx = -this.dx;
         }
 
         // Bounce vertically
         if (newY < 0 || newY + texture.getHeight() > Gdx.graphics.getHeight()) {
-            speedY = -speedY;
+            this.dy = -this.dy;
         }
 
         // Clamp position after bounce

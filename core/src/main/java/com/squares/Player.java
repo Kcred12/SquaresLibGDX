@@ -7,10 +7,12 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Player {
 
+    public float dx = 0, dy = 0; // velocity
     public float x, y;
     private float speed;
     public Texture texture;
     public final int SIZE = 30;
+    public final float radius;
 
     // Movement flags
     public boolean movingLeft, movingRight, movingUp, movingDown;
@@ -18,8 +20,11 @@ public class Player {
     public Player(float startX, float startY, float speed) {
         this.x = startX;
         this.y = startY;
+        this.dx = dx;
+        this.dy = dy;
         this.speed = speed;
         this.texture = createTexture(SIZE, SIZE, Color.CYAN); // electric cyan square
+        this.radius = SIZE / 2f + 3;
     }
 
     // Generate a simple colored square texture
@@ -34,23 +39,24 @@ public class Player {
 
     // Update player position
  public void update(float deltaTime) {
-    float dx = 0, dy = 0;
+    this.dx = 0;
+    this.dy = 0;
 
-    if (movingLeft)  dx -= 1;
-    if (movingRight) dx += 1;
-    if (movingUp)    dy += 1;
-    if (movingDown)  dy -= 1;
+    if (movingLeft)  this.dx -= 1;
+    if (movingRight) this.dx += 1;
+    if (movingUp)    this.dy += 1;
+    if (movingDown)  this.dy -= 1;
 
     // Normalize if moving diagonally
-    float length = (float) Math.sqrt(dx * dx + dy * dy);
+    float length = (float) Math.sqrt(this.dx * this.dx + this.dy * this.dy);
     if (length > 0) {
-        dx = (dx / length) * speed * deltaTime;
-        dy = (dy / length) * speed * deltaTime;
+        this.dx = (this.dx / length) * speed * deltaTime;
+        this.dy = (this.dy / length) * speed * deltaTime;
     }
 
     // Candidate new positions
-    float newX = x + dx;
-    float newY = y + dy;
+    float newX = x + this.dx;
+    float newY = y + this.dy;
 
     // Clamp to screen bounds
     newX = Math.max(0, Math.min(newX, Gdx.graphics.getWidth() - this.texture.getWidth()));
