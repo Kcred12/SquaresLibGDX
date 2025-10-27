@@ -4,26 +4,32 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 
 public class SquaresGame extends ApplicationAdapter {
 
     private static float player_speed = 400f;
-    private static float enemy_speed = 200f;
+    private static float enemy_speed = 300f;
 
     private Player player;
     private Array<Enemy> enemies;
     private SpriteBatch batch;
 
+    // A bunch of style things
+    public float animation_time = 0;
+    public ShapeRenderer shapeRenderer;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
         player = new Player(35, 100, player_speed);
 
         // Set InputProcessor for reliable keyboard input
         Gdx.input.setInputProcessor(new PlayerInput(player));
         
-        enemies = new Array<Enemy>();
+        enemies = new Array<>();
         for (int i = 0; i < 20; i++) {
 
             Enemy enemy = new Enemy(enemy_speed);
@@ -34,6 +40,7 @@ public class SquaresGame extends ApplicationAdapter {
     @Override
     public void render() {
         float deltaTime = Gdx.graphics.getDeltaTime();
+        animation_time += deltaTime;
 
         // Clear screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -43,7 +50,6 @@ public class SquaresGame extends ApplicationAdapter {
         player.update(deltaTime);
         for (Enemy enemy : enemies) {
             enemy.update(deltaTime);
-            checkPlayerEnemyCollision(player, enemy);
         }  
         
 
@@ -51,12 +57,12 @@ public class SquaresGame extends ApplicationAdapter {
         batch.begin();
         batch.draw(player.texture, player.x, player.y);
         for (Enemy enemy : enemies) {
-            batch.draw(enemy.texture, enemy.x, enemy.y);
+            enemy.render(batch, deltaTime);
         }  
         batch.end();
     }
 
-    private void checkPlayerEnemyCollision(Player player, Enemy enemy) {
+    private boolean checkPlayerEnemyCollision(Player player, Enemy enemy) {
 
         float playerCenterX = player.x + player.texture.getWidth() / 2f;
         float playerCenterY = player.y + player.texture.getHeight() / 2f;
@@ -95,7 +101,10 @@ public class SquaresGame extends ApplicationAdapter {
             float dot = enemy.dx * nx + enemy.dy * ny;
             enemy.dx -= 2 * dot * nx;
             enemy.dy -= 2 * dot * ny;
+
+            return true;
     }
+    return false;
 }
 
 

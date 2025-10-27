@@ -38,32 +38,32 @@ public class Player {
     }
 
     // Update player position
- public void update(float deltaTime) {
-    this.dx = 0;
-    this.dy = 0;
+    public void update(float deltaTime) {
+        this.dx = 0;
+        this.dy = 0;
 
-    if (movingLeft)  this.dx -= 1;
-    if (movingRight) this.dx += 1;
-    if (movingUp)    this.dy += 1;
-    if (movingDown)  this.dy -= 1;
+        if (movingLeft)  this.dx -= 1;
+        if (movingRight) this.dx += 1;
+        if (movingUp)    this.dy += 1;
+        if (movingDown)  this.dy -= 1;
 
-    // Normalize if moving diagonally
-    float length = (float) Math.sqrt(this.dx * this.dx + this.dy * this.dy);
-    if (length > 0) {
-        this.dx = (this.dx / length) * speed * deltaTime;
-        this.dy = (this.dy / length) * speed * deltaTime;
-    }
+        // Normalize if moving diagonally
+        float length = (float) Math.sqrt(this.dx * this.dx + this.dy * this.dy);
+        if (length > 0) {
+            this.dx = (this.dx / length) * speed * deltaTime;
+            this.dy = (this.dy / length) * speed * deltaTime;
+        }
 
-    // Candidate new positions
-    float newX = x + this.dx;
-    float newY = y + this.dy;
+        // Candidate new positions
+        float newX = x + this.dx;
+        float newY = y + this.dy;
 
-    // Clamp to screen bounds
-    newX = Math.max(0, Math.min(newX, Gdx.graphics.getWidth() - this.texture.getWidth()));
-    newY = Math.max(0, Math.min(newY, Gdx.graphics.getHeight() - this.texture.getHeight()));
+        // Clamp to screen bounds
+        newX = Math.max(0, Math.min(newX, Gdx.graphics.getWidth() - this.texture.getWidth()));
+        newY = Math.max(0, Math.min(newY, Gdx.graphics.getHeight() - this.texture.getHeight()));
 
-    this.x = newX;
-    this.y = newY;
+        this.x = newX;
+        this.y = newY;
 }
 
 
