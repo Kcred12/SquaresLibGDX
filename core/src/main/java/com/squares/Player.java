@@ -4,26 +4,27 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Player {
 
-    public float x, y;
-    public float dx = 0, dy = 0;
+    public Vector2 position;     // Player position
+    public Vector2 velocity;     // Movement velocity
     private final float speed;
-
     public final int SIZE = 30;
     public final float radius;
     public Texture texture;
 
+    // Movement flags
     public boolean movingLeft, movingRight, movingUp, movingDown;
 
     public Player(float startX, float startY, float speed) {
-        this.x = startX;
-        this.y = startY;
+        this.position = new Vector2(startX, startY);
+        this.velocity = new Vector2(0, 0);
         this.speed = speed;
-        this.texture = createTexture(SIZE, SIZE, new Color(0f, 1f, 1f, 1f));
+        this.texture = createTexture(SIZE, SIZE, new Color(0f, 1f, 1f, 1f)); // neon cyan
         this.radius = SIZE / 2f + 3;
     }
 
@@ -36,62 +37,56 @@ public class Player {
         return tex;
     }
 
-    public void dash() {
-        float dashDistance = 100f;
-        float dashX = 0;
-        float dashY = 0;
-
-        if (movingLeft) dashX -= dashDistance;
-        if (movingRight) dashX += dashDistance;
-        if (movingUp) dashY += dashDistance;
-        if (movingDown) dashY -= dashDistance;
-
-        float length = (float) Math.sqrt(dashX * dashX + dashY * dashY);
-        if (length > 0) {
-            dashX = dashX / length * dashDistance;
-            dashY = dashY / length * dashDistance;
-
-            this.x += dashX;
-            this.y += dashY;
-
-            // Clamp
-            this.x = Math.max(0, Math.min(this.x, Gdx.graphics.getWidth() - SIZE));
-            this.y = Math.max(0, Math.min(this.y, Gdx.graphics.getHeight() - SIZE));
-        }
-    }
-
     public void update(float deltaTime) {
-        dx = 0;
-        dy = 0;
+        // Reset velocity
+        this.velocity.set(0, 0);
 
-        if (movingLeft) dx -= 1;
-        if (movingRight) dx += 1;
-        if (movingUp) dy += 1;
-        if (movingDown) dy -= 1;
+        if (movingLeft)  this.velocity.x -= 1;
+        if (movingRight) this.velocity.x += 1;
+        if (movingUp)    this.velocity.y += 1;
+        if (movingDown)  this.velocity.y -= 1;
 
-        float length = (float) Math.sqrt(dx*dx + dy*dy);
-        if (length > 0) {
-            dx = dx / length * speed * deltaTime;
-            dy = dy / length * speed * deltaTime;
+        // Normalize diagonal movement
+        if (this.velocity.len() > 0) {
+            this.velocity.nor().scl(speed * deltaTime);
         }
 
-        x += dx;
-        y += dy;
+        // Move player
+        position.add(this.velocity);
 
-        // Clamp
-        x = Math.max(0, Math.min(x, Gdx.graphics.getWidth() - SIZE));
-        y = Math.max(0, Math.min(y, Gdx.graphics.getHeight() - SIZE));
+        // Clamp to screen
+        position.x = Math.max(0, Math.min(position.x, Gdx.graphics.getWidth() - SIZE));
+        position.y = Math.max(0, Math.min(position.y, Gdx.graphics.getHeight() - SIZE));
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(texture, x, y);
+        batch.draw(this.texture, this.position.x, this.position.y);
     }
 
-    public void drawOutline(ShapeRenderer renderer) {
-        renderer.rect(x, y, SIZE, SIZE);
+    public void blink() {
+        float dashDistance = 100f;
+        Vector2 dashVector = new Vector2(0, 0);
+
+        if (movingLeft)  dashVector.x -= 1;
+        if (movingRight) dashVector.x += 1;
+        if (movingUp)    dashVector.y += 1;
+        if (movingDown)  dashVector.y -= 1;
+
+        if (dashVector.len() > 0) {
+            dashVector.nor().scl(dashDistance);
+            this.position.add(dashVector);
+
+            // Clamp to screen after dash
+            this.position.x = Math.max(0, Math.min(this.position.x, Gdx.graphics.getWidth() - SIZE));
+            this.position.y = Math.max(0, Math.min(this.position.y, Gdx.graphics.getHeight() - SIZE));
+        }
+    }
+
+    public void drawOutline(ShapeRenderer shapeRenderer) {
+        shapeRenderer.rect(this.position.x, this.position.y, SIZE, SIZE);
     }
 
     public void dispose() {
-        texture.dispose();
+        this.texture.dispose();
     }
 }

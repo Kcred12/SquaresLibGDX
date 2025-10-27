@@ -22,7 +22,7 @@ public class PlayerInput implements InputProcessor {
             case Keys.D : player.movingRight = true; break;
             case Keys.W :    player.movingUp = true; break;
             case Keys.S :  player.movingDown = true; break;
-            case Keys.SPACE: player.dash(); break;
+            case Keys.SPACE: player.blink(); break;
         }
         return true;
     }
