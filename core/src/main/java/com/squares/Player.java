@@ -36,6 +36,30 @@ public class Player {
         return tex;
     }
 
+    public void dash() {
+        float dashDistance = 100f;
+        float dashX = 0;
+        float dashY = 0;
+
+        if (movingLeft) dashX -= dashDistance;
+        if (movingRight) dashX += dashDistance;
+        if (movingUp) dashY += dashDistance;
+        if (movingDown) dashY -= dashDistance;
+
+        float length = (float) Math.sqrt(dashX * dashX + dashY * dashY);
+        if (length > 0) {
+            dashX = dashX / length * dashDistance;
+            dashY = dashY / length * dashDistance;
+
+            this.x += dashX;
+            this.y += dashY;
+
+            // Clamp
+            this.x = Math.max(0, Math.min(this.x, Gdx.graphics.getWidth() - SIZE));
+            this.y = Math.max(0, Math.min(this.y, Gdx.graphics.getHeight() - SIZE));
+        }
+    }
+
     public void update(float deltaTime) {
         dx = 0;
         dy = 0;
