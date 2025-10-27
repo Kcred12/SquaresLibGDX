@@ -23,7 +23,7 @@ public class Player {
         this.dx = dx;
         this.dy = dy;
         this.speed = speed;
-        this.texture = createTexture(SIZE, SIZE, Color.CYAN); // electric cyan square
+        this.texture = createTexture(SIZE, SIZE, new Color(0f, 1f, 1f, 1f)); // neon cyan
         this.radius = SIZE / 2f + 3;
     }
 

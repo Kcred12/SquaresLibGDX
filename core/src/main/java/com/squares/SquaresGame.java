@@ -2,6 +2,7 @@ package com.squares;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -46,10 +47,27 @@ public class SquaresGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Draw background gradient
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // Top color
+        // Darker gradient background
+        Color top = new Color(0.168f, 0f, 0.235f, 1f);   // deep purple (top)
+        Color bottom = new Color(0.1f, 0f, 0.2f, 1f);    // darker purple (bottom)
+
+
+        // Draw gradient as 2 triangles filling the screen
+        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
+                bottom, bottom, top, top);
+
+        shapeRenderer.end();
+
+
         // Update player and enemies
         player.update(deltaTime);
         for (Enemy enemy : enemies) {
             enemy.update(deltaTime);
+            checkPlayerEnemyCollision(player, enemy);
         }  
         
 
@@ -57,9 +75,22 @@ public class SquaresGame extends ApplicationAdapter {
         batch.begin();
         batch.draw(player.texture, player.x, player.y);
         for (Enemy enemy : enemies) {
-            enemy.render(batch, deltaTime);
+            batch.draw(enemy.texture, enemy.x, enemy.y);
         }  
         batch.end();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.WHITE);
+
+        // Draw outline around player
+        shapeRenderer.rect(player.x, player.y, player.SIZE, player.SIZE);
+
+        // Draw outline around enemies
+        for (Enemy enemy : enemies) {
+            shapeRenderer.rect(enemy.x, enemy.y, enemy.SIZE, enemy.SIZE);
+        }
+
+        shapeRenderer.end();
     }
 
     private boolean checkPlayerEnemyCollision(Player player, Enemy enemy) {
@@ -91,12 +122,8 @@ public class SquaresGame extends ApplicationAdapter {
 
             // Step 2: Push the enemy away from the player
             float overlap = radiusSum - distance;
-            enemy.x += nx * overlap * 0.8f;
-            enemy.y += ny * overlap * 0.8f;
-
-            // Step 3: Push the player away from the enemy
-            player.x -= nx * overlap * 0.2f;
-            player.y -= ny * overlap * 0.2f;
+            enemy.x += nx * overlap;
+            enemy.y += ny * overlap;
 
             float dot = enemy.dx * nx + enemy.dy * ny;
             enemy.dx -= 2 * dot * nx;

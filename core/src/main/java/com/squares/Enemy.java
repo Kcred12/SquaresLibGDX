@@ -6,21 +6,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Enemy {
 
-    private final int SIZE = 15;
+    public final int SIZE = 15;
     private final float maxSpeed;
 
     public float x, y;          // Position
     public float dx, dy; // Velocity
     public final float radius;
+    public Color color = new Color(1f, 0f, 0.9f, 1f);
 
     public Texture texture;
-    public int MAX_TRAIL = 10;
+    public int MAX_TRAIL = 5;
     public Array<Vector2> trail = new Array<>();
 
     private static final Random random = new Random();
@@ -37,7 +37,7 @@ public class Enemy {
         this.dx = (float) Math.cos(angle) * maxSpeed;
         this.dy = (float) Math.sin(angle) * maxSpeed;
 
-        this.texture = createTexture(SIZE, SIZE, Color.RED);
+        this.texture = createTexture(SIZE, SIZE, color); // neon magenta
 
         this.radius = SIZE / 2f + 2;
     }
@@ -73,19 +73,6 @@ public class Enemy {
         // Record trail
         trail.add(new Vector2(x, y));
         if (trail.size > MAX_TRAIL) trail.removeIndex(0);
-    }
-
-    public void render(SpriteBatch batch, float time) {
-        // Draw trail
-        for (int i = 0; i < trail.size; i++) {
-            float alpha = i / (float)trail.size;
-            batch.setColor(1, 0, 0, alpha * 0.5f);
-            Vector2 pos = trail.get(i);
-            batch.draw(texture, pos.x, pos.y, SIZE, SIZE);
-        }
-
-        // Apparently necessary to reset the batch color so the next draw is normal
-        batch.setColor(Color.WHITE);
     }
 
     public boolean collidesWith(Enemy other) {
